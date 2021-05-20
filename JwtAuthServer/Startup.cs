@@ -2,6 +2,9 @@ using System;
 using System.Text;
 using JwtAuthServer.Authentication.Data;
 using JwtAuthServer.Authentication.Entities;
+using JwtAuthServer.Authentication.Managers;
+using JwtAuthServer.Authentication.Services;
+using JwtAuthServer.Authentication.Validators;
 using JwtAuthServer.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -34,7 +37,12 @@ namespace JwtAuthServer
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders()
                 .AddUserStore<UserStore<AppUser, AppRole, AppDbContext, long>>()
-                .AddRoleStore<RoleStore<AppRole, AppDbContext, long>>();
+                .AddRoleStore<RoleStore<AppRole, AppDbContext, long>>()
+                .AddUserManager<AppUserManager>()
+                .AddUserValidator<AppUserValidator>();
+
+            services.AddScoped<AppUserManager>();
+            services.AddScoped<IAppUserService, AppUserService>();
 
             services.AddDbContext<AppDbContext>
                 (options => options.UseSqlServer(Configuration.GetConnectionString("AuthConnectionString")));
