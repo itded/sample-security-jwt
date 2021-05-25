@@ -1,6 +1,6 @@
 ﻿namespace JwtAuthServer.Authentication.Models
 {
-    public class UserRegisterModel
+    public class UserRegisterRequest
     {
         public string UserName { get; set; }
 

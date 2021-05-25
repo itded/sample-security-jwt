@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using JwtAuthServer.Authentication.Data;
 using JwtAuthServer.Authentication.Entities;
@@ -6,6 +8,8 @@ using JwtAuthServer.Authentication.Managers;
 using JwtAuthServer.Authentication.Services;
 using JwtAuthServer.Authentication.Validators;
 using JwtAuthServer.Settings;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -47,9 +51,11 @@ namespace JwtAuthServer
             services.AddDbContext<AppDbContext>
                 (options => options.UseSqlServer(Configuration.GetConnectionString("AuthConnectionString")));
 
-            // TODO: add logging
+            services.AddLogging();
 
             services.AddControllers();
+
+            RegisterMapping(services);
 
             // configure Jwt settings
             var jwtSettingsSection = Configuration.GetSection("JWT");
@@ -96,6 +102,16 @@ namespace JwtAuthServer
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private void RegisterMapping(IServiceCollection services)
+        {
+            var config = new TypeAdapterConfig();
+            // scan the current assembly and register all found mappings
+            var mappingRegistrations = TypeAdapterConfig.GlobalSettings.Scan(typeof(Startup).Assembly);
+            mappingRegistrations.ToList().ForEach(register => register.Register(config));
+            var mapperConfig = new Mapper(config);
+            services.AddSingleton<IMapper>(mapperConfig);
         }
     }
 }
