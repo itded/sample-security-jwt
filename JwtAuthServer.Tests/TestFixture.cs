@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using JwtAuthServer.Authentication.Data;
 using JwtAuthServer.Authentication.Entities;
 using JwtAuthServer.Authentication.Managers;
+using JwtAuthServer.Authentication.Providers;
 using JwtAuthServer.Authentication.Services;
 using JwtAuthServer.Authentication.Validators;
+using JwtAuthServer.Settings;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace JwtAuthServer.Tests
 {
@@ -22,13 +26,30 @@ namespace JwtAuthServer.Tests
         {
             var serviceCollection = new ServiceCollection();
 
-            serviceCollection.AddSingleton<IConfiguration>(GetIConfigurationRoot());
+            Configuration = GetIConfigurationRoot();
+
+            serviceCollection.AddSingleton(Configuration);
+            serviceCollection.AddSingleton(_ =>
+                {
+                    var jwtSettings = Configuration.GetSection(JwtSettings.Position).Get<JwtSettings>();
+                    return new TokenValidationParameters()
+                    {
+                        ClockSkew = TimeSpan.FromSeconds(5),
+                        ValidateIssuerSigningKey = true,
+                        // TODO: validate the issuer and the audience
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
+                    };
+                }
+            );
 
             serviceCollection.AddDbContext<AppDbContext>(options =>
                 options.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()));
             serviceCollection.AddIdentity<AppUser, AppRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders()
+                .AddTokenProvider<AppTokenProvider>(nameof(AppTokenProvider))
                 /* depends on AppDbContext configuration */
                 .AddUserStore<UserStore<AppUser, AppRole, AppDbContext, long, AppUserClaim, AppUserRole, AppUserLogin, AppUserToken, AppRoleClaim>>()
                 .AddRoleStore<RoleStore<AppRole, AppDbContext, long, AppUserRole, AppRoleClaim>>()
@@ -51,13 +72,14 @@ namespace JwtAuthServer.Tests
 
         public ServiceProvider ServiceProvider { get; }
 
-        private static IConfigurationRoot GetIConfigurationRoot()
+        public IConfiguration Configuration { get; }
+
+        private static IConfiguration GetIConfigurationRoot()
         {
             var outputPath = AppDomain.CurrentDomain.BaseDirectory;
             return new ConfigurationBuilder()
                 .SetBasePath(outputPath)
-                .AddJsonFile("appsettings.json", optional: true)
-                .AddEnvironmentVariables()
+                .AddJsonFile("appsettings.json")
                 .Build();
         }
 

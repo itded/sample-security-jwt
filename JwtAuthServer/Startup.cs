@@ -5,6 +5,7 @@ using System.Text;
 using JwtAuthServer.Authentication.Data;
 using JwtAuthServer.Authentication.Entities;
 using JwtAuthServer.Authentication.Managers;
+using JwtAuthServer.Authentication.Providers;
 using JwtAuthServer.Authentication.Services;
 using JwtAuthServer.Authentication.Validators;
 using JwtAuthServer.Settings;
@@ -40,6 +41,7 @@ namespace JwtAuthServer
             services.AddIdentity<AppUser, AppRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders()
+                .AddTokenProvider<AppTokenProvider>(nameof(AppTokenProvider))
                 .AddUserStore<UserStore<AppUser, AppRole, AppDbContext, long>>()
                 .AddRoleStore<RoleStore<AppRole, AppDbContext, long>>()
                 .AddUserManager<AppUserManager>()
@@ -58,9 +60,20 @@ namespace JwtAuthServer
             RegisterMapping(services);
 
             // configure Jwt settings
-            var jwtSettingsSection = Configuration.GetSection("JWT");
-            services.Configure<JwtSettings>(jwtSettingsSection);
+            var jwtSettingsSection = Configuration.GetSection(JwtSettings.Position);
             var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
+
+            var tokenValidationParameters = new TokenValidationParameters()
+            {
+                ClockSkew = TimeSpan.FromSeconds(5),
+                ValidateIssuerSigningKey = true,
+                // TODO: validate the issuer and the audience
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
+            };
+
+            services.AddSingleton(_ => tokenValidationParameters);
 
             services.AddAuthentication(options =>
                 {
@@ -72,17 +85,8 @@ namespace JwtAuthServer
                 {
                     options.RequireHttpsMetadata = false;
                     options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ClockSkew = TimeSpan.FromSeconds(5),
-                        ValidateIssuerSigningKey = true,
-                        // TODO: validate the issuer and the audience
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
-                    };
+                    options.TokenValidationParameters = tokenValidationParameters;
                 });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
