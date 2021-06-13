@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtAuthServer", "JwtAuthSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtAuthServer.Tests", "JwtAuthServer.Tests\JwtAuthServer.Tests.csproj", "{D89F43B5-B6D0-4D76-AD2E-1FD1A33EB930}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1EBDCE14-8DA5-4E71-B42D-DA8D8F515482}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtAuthRestApi.Benchmarks", "JwtAuthRestApi.Benchmarks\JwtAuthRestApi.Benchmarks.csproj", "{532EE811-5ED1-4A69-AEC4-266B627465CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{D89F43B5-B6D0-4D76-AD2E-1FD1A33EB930}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D89F43B5-B6D0-4D76-AD2E-1FD1A33EB930}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D89F43B5-B6D0-4D76-AD2E-1FD1A33EB930}.Release|Any CPU.Build.0 = Release|Any CPU
+		{532EE811-5ED1-4A69-AEC4-266B627465CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{532EE811-5ED1-4A69-AEC4-266B627465CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{532EE811-5ED1-4A69-AEC4-266B627465CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{532EE811-5ED1-4A69-AEC4-266B627465CA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D89F43B5-B6D0-4D76-AD2E-1FD1A33EB930} = {1EBDCE14-8DA5-4E71-B42D-DA8D8F515482}
+		{532EE811-5ED1-4A69-AEC4-266B627465CA} = {1EBDCE14-8DA5-4E71-B42D-DA8D8F515482}
 	EndGlobalSection
 EndGlobal
