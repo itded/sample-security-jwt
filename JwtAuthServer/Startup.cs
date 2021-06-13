@@ -7,6 +7,7 @@ using JwtAuthServer.Authentication.Entities;
 using JwtAuthServer.Authentication.Managers;
 using JwtAuthServer.Authentication.Providers;
 using JwtAuthServer.Authentication.Services;
+using JwtAuthServer.Authentication.Stores;
 using JwtAuthServer.Authentication.Validators;
 using JwtAuthServer.Settings;
 using Mapster;
@@ -42,6 +43,7 @@ namespace JwtAuthServer
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders()
                 .AddTokenProvider<AppTokenProvider>(nameof(AppTokenProvider))
+                .AddTokenProvider<AppRefreshTokenProvider>(nameof(AppRefreshTokenProvider))
                 .AddUserStore<UserStore<AppUser, AppRole, AppDbContext, long>>()
                 .AddRoleStore<RoleStore<AppRole, AppDbContext, long>>()
                 .AddUserManager<AppUserManager>()
@@ -49,6 +51,8 @@ namespace JwtAuthServer
 
             services.AddScoped<AppUserManager>();
             services.AddScoped<IAppUserService, AppUserService>();
+
+            services.AddScoped<AppRefreshTokenUserStore>();
 
             services.AddDbContext<AppDbContext>
                 (options => options.UseSqlServer(Configuration.GetConnectionString("AuthConnectionString")));

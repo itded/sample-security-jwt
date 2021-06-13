@@ -81,6 +81,7 @@ namespace JwtAuthServer.Tests.Services
             Assert.True(loginResult.Succeeded);
             Assert.NotNull(loginResult.UserInfo);
             Assert.NotEmpty(loginResult.JwtToken);
+            Assert.NotEmpty(loginResult.RefreshToken);
         }
     }
 }

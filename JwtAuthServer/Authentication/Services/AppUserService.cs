@@ -62,11 +62,13 @@ namespace JwtAuthServer.Authentication.Services
             }
 
             var jwtToken = await GenerateJwtTokenAsync(user);
+            var refreshToken = await GenerateRefreshTokenAsync(user);
 
             return new UserLoginResponse()
             {
                 UserInfo = user.Adapt<UserInfo>(),
-                JwtToken = jwtToken
+                JwtToken = jwtToken,
+                RefreshToken = refreshToken
             };
         }
 
@@ -75,5 +77,58 @@ namespace JwtAuthServer.Authentication.Services
             var result = await _userManager.GenerateUserTokenAsync(user, nameof(AppTokenProvider), "Token");
             return result;
         }
+
+        private async Task<string> GenerateRefreshTokenAsync(AppUser user)
+        {
+            var result = await _userManager.GenerateUserTokenAsync(user, nameof(AppRefreshTokenProvider), "RefreshToken");
+            await _userManager.SetAuthenticationTokenAsync(user, nameof(AppRefreshTokenProvider), "RefreshToken", result);
+
+            return result;
+        }
+
+        // private async Task<VerifyTokenResponse> VerifyTokenAsync(VerifyTokenRequest tokenRequest)
+        // {
+        //     IUserAuthenticationTokenStore<AppUserToken> store;
+        //     _userManager.GenerateUserTokenAsync()
+        // }
+
+
+        // private async Task<VerifyTokenResponse> VerifyTokenAsync(VerifyTokenRequest tokenRequest)
+        // {
+        //     try
+        //     {
+        //         // validation 1 - general
+        //         var jwtTokenHandler = new JwtSecurityTokenHandler();
+        //         var jwtClaimsPrincipal = jwtTokenHandler.ValidateToken(tokenRequest.Token, _tokenValidationParameters,
+        //             out var validatedToken);
+        //
+        //         // validation 2 - algorithm
+        //         if (validatedToken is JwtSecurityToken jwtSecurityToken)
+        //         {
+        //             var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithm,
+        //                 StringComparison.InvariantCultureIgnoreCase);
+        //
+        //             if (result == false)
+        //             {
+        //                 return null;
+        //             }
+        //         }
+        //         else
+        //         {
+        //             return null;
+        //         }
+        //
+        //         // validation 3 - expiration date
+        //
+        //         // validation 4 - validate existence of the token
+        //         _userManager.VerifyUserTokenAsync()
+        //         var storedToken =
+        //             await _apiDbContext.RefreshTokens.FirstOrDefaultAsync(x => x.Token == tokenRequest.RefreshToken);
+        //
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //     }
+        // }
     }
 }

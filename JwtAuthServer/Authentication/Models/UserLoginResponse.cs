@@ -14,5 +14,7 @@
         public UserInfo UserInfo { get; set; }
 
         public string JwtToken { get; set; }
+
+        public string RefreshToken { get; set; }
     }
 }

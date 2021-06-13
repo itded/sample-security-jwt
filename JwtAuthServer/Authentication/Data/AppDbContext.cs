@@ -17,5 +17,15 @@ namespace JwtAuthServer.Authentication.Data
         {
             // nothing
         }
+
+        public DbSet<AppUserRefreshToken> RefreshTokens { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<AppUserRefreshToken>()
+                .ToTable("AppUserRefreshTokens")
+                .HasKey(t => new {t.UserId, t.LoginProvider, t.Name});
+        }
     }
 }
