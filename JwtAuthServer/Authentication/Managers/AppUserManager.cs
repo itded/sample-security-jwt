@@ -37,5 +37,25 @@ namespace JwtAuthServer.Authentication.Managers
             await _refreshTokenStore.SetTokenAsync(user, loginProvider, tokenName, tokenValue, CancellationToken);
             return await UpdateUserAsync(user);
         }
+
+        public async Task<IdentityResult> InvalidateRefreshTokenAsync(AppUser user, string loginProvider, string tokenName, string tokenValue)
+        {
+            ThrowIfDisposed();
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            if (loginProvider == null)
+            {
+                throw new ArgumentNullException(nameof(loginProvider));
+            }
+            if (tokenName == null)
+            {
+                throw new ArgumentNullException(nameof(tokenName));
+            }
+
+            await _refreshTokenStore.RevokeTokenAsync(user, loginProvider, tokenName, tokenValue, CancellationToken);
+            return await UpdateUserAsync(user);
+        }
     }
 }

@@ -2,8 +2,7 @@
 {
     public class UserLoginResponse : ResponseBase
     {
-
-        public UserLoginResponse() : base()
+        public UserLoginResponse()
         {
         }
 

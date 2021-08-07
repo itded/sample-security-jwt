@@ -14,7 +14,8 @@ namespace JwtAuthServer.Authentication.Providers
 {
     public class AppTokenProvider: IUserTwoFactorTokenProvider<AppUser>
     {
-        private const string SecurityAlgorithm = SecurityAlgorithms.HmacSha512Signature;
+        private const string SecurityAlgorithmSignature = SecurityAlgorithms.HmacSha512Signature;
+        private const string SecurityAlgorithm = SecurityAlgorithms.HmacSha512;
 
         private readonly IConfiguration _config;
         private readonly TokenValidationParameters _tokenValidationParameters;
@@ -43,7 +44,7 @@ namespace JwtAuthServer.Authentication.Providers
             var tokenSecret = settings.Secret;
             var tokenTtl = settings.TokenTtl;
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSecret));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithm);
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithmSignature);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

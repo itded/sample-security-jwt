@@ -81,54 +81,120 @@ namespace JwtAuthServer.Authentication.Services
         private async Task<string> GenerateRefreshTokenAsync(AppUser user)
         {
             var result = await _userManager.GenerateUserTokenAsync(user, nameof(AppRefreshTokenProvider), "RefreshToken");
-            await _userManager.SetAuthenticationTokenAsync(user, nameof(AppRefreshTokenProvider), "RefreshToken", result);
+            await _userManager.SetRefreshTokenAsync(user, nameof(AppRefreshTokenProvider), "RefreshToken", result);
 
             return result;
         }
 
-        // private async Task<VerifyTokenResponse> VerifyTokenAsync(VerifyTokenRequest tokenRequest)
-        // {
-        //     IUserAuthenticationTokenStore<AppUserToken> store;
-        //     _userManager.GenerateUserTokenAsync()
-        // }
+        public async Task<RotateTokenResponse> RotateTokenAsync(RotateTokenRequest model)
+        {
+            try
+            {
+                var user = await _userManager.FindByNameAsync(model.UserName);
+                if (user == null)
+                {
+                    return new RotateTokenResponse(new ResponseError()
+                    {
+                        Code = "UserDoesNotExist",
+                        Description = "User does not exist"
+                    });
+                }
 
+                var isTokenValid = await _userManager.VerifyUserTokenAsync(user, nameof(AppTokenProvider),
+                    "VerifyToken",
+                    model.Token);
+                if (!isTokenValid)
+                {
+                    return new RotateTokenResponse(new ResponseError()
+                    {
+                        Code = "InvalidToken",
+                        Description = "Token is invalid"
+                    });
+                }
 
-        // private async Task<VerifyTokenResponse> VerifyTokenAsync(VerifyTokenRequest tokenRequest)
-        // {
-        //     try
-        //     {
-        //         // validation 1 - general
-        //         var jwtTokenHandler = new JwtSecurityTokenHandler();
-        //         var jwtClaimsPrincipal = jwtTokenHandler.ValidateToken(tokenRequest.Token, _tokenValidationParameters,
-        //             out var validatedToken);
-        //
-        //         // validation 2 - algorithm
-        //         if (validatedToken is JwtSecurityToken jwtSecurityToken)
-        //         {
-        //             var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithm,
-        //                 StringComparison.InvariantCultureIgnoreCase);
-        //
-        //             if (result == false)
-        //             {
-        //                 return null;
-        //             }
-        //         }
-        //         else
-        //         {
-        //             return null;
-        //         }
-        //
-        //         // validation 3 - expiration date
-        //
-        //         // validation 4 - validate existence of the token
-        //         _userManager.VerifyUserTokenAsync()
-        //         var storedToken =
-        //             await _apiDbContext.RefreshTokens.FirstOrDefaultAsync(x => x.Token == tokenRequest.RefreshToken);
-        //
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //     }
-        // }
+                var isRefreshTokenValid = await _userManager.VerifyUserTokenAsync(user, nameof(AppRefreshTokenProvider),
+                    "VerifyRefreshToken",
+                    model.RefreshToken);
+                if (!isRefreshTokenValid)
+                {
+                    return new RotateTokenResponse(new ResponseError()
+                    {
+                        Code = "InvalidRefreshToken",
+                        Description = "Refresh token is invalid"
+                    });
+                }
+
+                // generate a new refresh token and invalidate the current one
+                var jwtToken = await GenerateJwtTokenAsync(user);
+                var refreshToken = await GenerateRefreshTokenAsync(user);
+
+                await _userManager.InvalidateRefreshTokenAsync(user, nameof(AppRefreshTokenProvider), "RefreshToken",
+                    model.RefreshToken);
+
+                return new RotateTokenResponse()
+                {
+                    JwtToken = jwtToken,
+                    RefreshToken = refreshToken
+                };
+            }
+            catch (Exception ex)
+            {
+                return new RotateTokenResponse(new ResponseError()
+                {
+                    Code = "Exception",
+                    Description = ex.Message
+                });
+            }
+        }
+
+        public async Task<ValidateTokenResponse> ValidateTokenAsync(ValidateTokenRequest model)
+        {
+            try
+            {
+                var user = await _userManager.FindByNameAsync(model.UserName);
+                if (user == null)
+                {
+                    return new ValidateTokenResponse(new ResponseError()
+                    {
+                        Code = "UserDoesNotExist",
+                        Description = "User does not exist"
+                    });
+                }
+
+                var isTokenValid = await _userManager.VerifyUserTokenAsync(user, nameof(AppTokenProvider),
+                    "VerifyToken",
+                    model.Token);
+                if (!isTokenValid)
+                {
+                    return new ValidateTokenResponse(new ResponseError()
+                    {
+                        Code = "InvalidToken",
+                        Description = "Token is invalid"
+                    });
+                }
+
+                var isRefreshTokenValid = await _userManager.VerifyUserTokenAsync(user, nameof(AppRefreshTokenProvider),
+                    "VerifyRefreshToken",
+                    model.RefreshToken);
+                if (!isRefreshTokenValid)
+                {
+                    return new ValidateTokenResponse(new ResponseError()
+                    {
+                        Code = "InvalidRefreshToken",
+                        Description = "Refresh token is invalid"
+                    });
+                }
+
+                return new ValidateTokenResponse();
+            }
+            catch (Exception ex)
+            {
+                return new ValidateTokenResponse(new ResponseError()
+                {
+                    Code = "Exception",
+                    Description = ex.Message
+                });
+            }
+        }
     }
 }

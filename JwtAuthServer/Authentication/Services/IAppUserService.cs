@@ -8,5 +8,9 @@ namespace JwtAuthServer.Authentication.Services
         Task<UserRegisterResponse> RegisterUserAsync(UserRegisterRequest model);
 
         Task<UserLoginResponse> LoginUserAsync(UserLoginRequest model);
+
+        Task<RotateTokenResponse> RotateTokenAsync(RotateTokenRequest model);
+
+        Task<ValidateTokenResponse> ValidateTokenAsync(ValidateTokenRequest model);
     }
 }
