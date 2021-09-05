@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using JwtAuthServer.Authentication.Models;
 using JwtAuthServer.Authentication.Services;
@@ -164,6 +165,8 @@ namespace JwtAuthServer.Tests.Services
                 UserName = userName,
                 Password = password
             });
+
+            await Task.Delay(TimeSpan.FromSeconds(10));
 
             var rotateResult = await userService.RotateTokenAsync(new RotateTokenRequest()
             {

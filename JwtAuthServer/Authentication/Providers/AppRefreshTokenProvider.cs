@@ -25,15 +25,16 @@ namespace JwtAuthServer.Authentication.Providers
             return ValueTask.FromResult(token).AsTask();
         }
 
-        public Task<bool> ValidateAsync(string purpose, string token, UserManager<AppUser> manager, AppUser user)
+        public async Task<bool> ValidateAsync(string purpose, string token, UserManager<AppUser> manager, AppUser user)
         {
-            var refreshToken = _refreshTokenUserStore.GetTokenByValue(user, nameof(AppRefreshTokenProvider), "RefreshToken", token);
-            if (refreshToken != null && refreshToken.Revoked == null && refreshToken.Expires < DateTime.UtcNow)
+            var refreshToken = await _refreshTokenUserStore.GetRefreshTokenAsync(
+                user, nameof(AppRefreshTokenProvider), "RefreshToken");
+            if (refreshToken != null && refreshToken.Value == token && refreshToken.Revoked == null && refreshToken.Expires > DateTime.UtcNow)
             {
-                return ValueTask.FromResult(true).AsTask();
+                return true;
             }
 
-            return ValueTask.FromResult(false).AsTask();
+            return  false;
         }
 
         public Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<AppUser> manager, AppUser user)

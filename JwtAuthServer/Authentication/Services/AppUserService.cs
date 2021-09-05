@@ -125,11 +125,11 @@ namespace JwtAuthServer.Authentication.Services
                 }
 
                 // generate a new refresh token and invalidate the current one
-                var jwtToken = await GenerateJwtTokenAsync(user);
-                var refreshToken = await GenerateRefreshTokenAsync(user);
-
                 await _userManager.InvalidateRefreshTokenAsync(user, nameof(AppRefreshTokenProvider), "RefreshToken",
                     model.RefreshToken);
+
+                var jwtToken = await GenerateJwtTokenAsync(user);
+                var refreshToken = await GenerateRefreshTokenAsync(user);
 
                 return new RotateTokenResponse()
                 {

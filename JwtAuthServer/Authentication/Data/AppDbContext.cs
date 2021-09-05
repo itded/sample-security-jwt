@@ -20,6 +20,8 @@ namespace JwtAuthServer.Authentication.Data
 
         public DbSet<AppUserRefreshToken> RefreshTokens { get; set; }
 
+        public DbSet<AppRevokedUserRefreshToken> RevokedRefreshTokens { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
