@@ -1,22 +1,11 @@
 using System;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using JwtAuthServer.Authentication.Data;
-using JwtAuthServer.Authentication.Entities;
-using JwtAuthServer.Authentication.Managers;
-using JwtAuthServer.Authentication.Providers;
-using JwtAuthServer.Authentication.Services;
-using JwtAuthServer.Authentication.Stores;
-using JwtAuthServer.Authentication.Validators;
+using JwtAuthServer.Configuration;
 using JwtAuthServer.Settings;
-using Mapster;
-using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,21 +27,7 @@ namespace JwtAuthServer
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            // https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.identitybuilder?view=aspnetcore-5.0
-            services.AddIdentity<AppUser, AppRole>()
-                .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders()
-                .AddTokenProvider<AppTokenProvider>(nameof(AppTokenProvider))
-                .AddTokenProvider<AppRefreshTokenProvider>(nameof(AppRefreshTokenProvider))
-                .AddUserStore<UserStore<AppUser, AppRole, AppDbContext, long>>()
-                .AddRoleStore<RoleStore<AppRole, AppDbContext, long>>()
-                .AddUserManager<AppUserManager>()
-                .AddUserValidator<AppUserValidator>();
-
-            services.AddScoped<AppUserManager>();
-            services.AddScoped<IAppUserService, AppUserService>();
-
-            services.AddScoped<AppRefreshTokenUserStore>();
+            ConfigurationHelper.ConfigureIdentitySystem(services);
 
             services.AddDbContext<AppDbContext>
                 (options => options.UseSqlServer(Configuration.GetConnectionString("AuthConnectionString")));
@@ -61,7 +36,7 @@ namespace JwtAuthServer
 
             services.AddControllers();
 
-            RegisterMapping(services);
+            ConfigurationHelper.ConfigureMapping(services);
 
             // configure Jwt settings
             var jwtSettingsSection = Configuration.GetSection(JwtSettings.Position);
@@ -110,16 +85,6 @@ namespace JwtAuthServer
             {
                 endpoints.MapControllers();
             });
-        }
-
-        private void RegisterMapping(IServiceCollection services)
-        {
-            var config = new TypeAdapterConfig();
-            // scan the current assembly and register all found mappings
-            var mappingRegistrations = TypeAdapterConfig.GlobalSettings.Scan(typeof(Startup).Assembly);
-            mappingRegistrations.ToList().ForEach(register => register.Register(config));
-            var mapperConfig = new Mapper(config);
-            services.AddSingleton<IMapper>(mapperConfig);
         }
     }
 }

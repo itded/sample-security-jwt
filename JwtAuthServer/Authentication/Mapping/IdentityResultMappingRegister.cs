@@ -15,6 +15,16 @@ namespace JwtAuthServer.Authentication.Mapping
                     x => x.Errors.Any()
                         ? new UserRegisterResponse(x.Errors.Select(e => e.Adapt<ResponseError>()).ToArray())
                         : new UserRegisterResponse());
+            config.NewConfig<IdentityResult, IdentityRolesResponse>()
+                .ConstructUsing(
+                    x => x.Errors.Any()
+                        ? new IdentityRolesResponse(x.Errors.Select(e => e.Adapt<ResponseError>()).ToArray())
+                        : new IdentityRolesResponse());
+            config.NewConfig<IdentityResult, AddUserToRolesResponse>()
+                .ConstructUsing(
+                    x => x.Errors.Any()
+                        ? new AddUserToRolesResponse(x.Errors.Select(e => e.Adapt<ResponseError>()).ToArray())
+                        : new AddUserToRolesResponse());
         }
     }
 }

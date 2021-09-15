@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using JwtAuthServer.Authentication.Entities;
 using JwtAuthServer.Authentication.Managers;
@@ -70,6 +71,42 @@ namespace JwtAuthServer.Authentication.Services
                 JwtToken = jwtToken,
                 RefreshToken = refreshToken
             };
+        }
+
+        public async Task<AddUserToRolesResponse> AddUserToRolesAsync(AddUserToRolesRequest model)
+        {
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user == null)
+            {
+                return new AddUserToRolesResponse(new ResponseError()
+                {
+                    Code = "UserDoesNotExist",
+                    Description = "User does not exist"
+                });
+            }
+
+            var roleNames = model.RoleNames;
+            if (roleNames == null || !roleNames.Any())
+            {
+                return new AddUserToRolesResponse(new ResponseError()
+                {
+                    Code = "EmptyIdentityRolesCollection",
+                    Description = "The request should contain at least one identity role."
+                });
+            }
+
+            if (roleNames.Any(string.IsNullOrWhiteSpace))
+            {
+                return new AddUserToRolesResponse(new ResponseError()
+                {
+                    Code = "EmptyIdentityRoleNames",
+                    Description = "The request should not contain an empty identity role."
+                });
+            }
+
+            var addToRolesResult = await _userManager.AddToRolesAsync(user, model.RoleNames);
+            var addUserToRolesResponse = addToRolesResult.Adapt<AddUserToRolesResponse>();
+            return addUserToRolesResponse;
         }
 
         private async Task<string> GenerateJwtTokenAsync(AppUser user)

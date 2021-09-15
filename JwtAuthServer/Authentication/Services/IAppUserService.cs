@@ -12,5 +12,7 @@ namespace JwtAuthServer.Authentication.Services
         Task<RotateTokenResponse> RotateTokenAsync(RotateTokenRequest model);
 
         Task<ValidateTokenResponse> ValidateTokenAsync(ValidateTokenRequest model);
+
+        Task<AddUserToRolesResponse> AddUserToRolesAsync(AddUserToRolesRequest model);
     }
 }
