@@ -1,0 +1,1 @@
+﻿shares request/response models between clients and Api controller

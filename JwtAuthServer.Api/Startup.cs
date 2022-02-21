@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using JwtAuthServer.Api.Mapping;
 using JwtAuthServer.Authentication.Data;
 using JwtAuthServer.Configuration;
 using JwtAuthServer.Settings;
@@ -41,6 +42,7 @@ namespace JwtAuthServer.Api
             });
 
             ConfigurationHelper.ConfigureMapping(services);
+            MappingHelper.ConfigureControllersMapping();
 
             // configure Jwt settings
             var jwtSettingsSection = Configuration.GetSection(JwtSettings.Position);

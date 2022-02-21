@@ -1,64 +1,39 @@
 ﻿using System;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading;
 using System.Threading.Tasks;
+using JwtDemoClientApp.Commands;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace JwtDemoClientApp
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static async Task Main()
         {
+            // Configure the app
+            var serviceProvider = CreateServiceProvider();
+
             // Send an authorization request to the server api
-
-            var host = CreateHostBuilder(args).Build();
-
-            try
+            var getTesterTokenCommand = serviceProvider.GetRequiredService<GetTesterTokenCommand>();
+            var getTesterTokenCommandResult = await getTesterTokenCommand.ExecuteAsync();
+            if (!getTesterTokenCommandResult.Success)
             {
-                var httpClientFactory = host.Services.GetRequiredService<IHttpClientFactory>();
-                var httpClient = httpClientFactory.CreateClient("DemoClient");
-
-                var request = new
-                {
-                    UserName = "tester",
-                    Password = "P@ssw0rd!"
-                };
-
-                var response = await httpClient.PostAsJsonAsync("/auth/authenticate", request, CancellationToken.None);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine(content);
-                }
-                else
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Failed with Code:{response.StatusCode}. Content: {content}");
-                }
+                return;
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
+
+            // Send a request to the resource server
+            var getTesterDocumentCommand = serviceProvider.GetRequiredService<GetTesterDocumentCommand>();
+            await getTesterDocumentCommand.ExecuteAsync(getTesterTokenCommandResult.Token);
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services.AddHttpClient("DemoClient", httpClient =>
-                    {
-                        httpClient.BaseAddress = new Uri("https://localhost:5001");
-                    }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-                    {
-                        ClientCertificateOptions = ClientCertificateOption.Manual,
-                        ServerCertificateCustomValidationCallback =
-                            (_, _, _, _) => true
-                    });
-                });
+        private static IServiceProvider CreateServiceProvider()
+        {
+            var services = new ServiceCollection();
+
+            var startup = new Startup();
+            startup.ConfigureServices(services);
+
+            var serviceProvider = services.BuildServiceProvider();
+            return serviceProvider;
+        }
     }
 }

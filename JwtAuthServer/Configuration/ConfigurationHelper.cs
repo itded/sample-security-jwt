@@ -40,11 +40,15 @@ namespace JwtAuthServer.Configuration
 
         public static void ConfigureMapping(IServiceCollection services)
         {
-            var config = new TypeAdapterConfig();
+            // global settings because we use the Adapt method
+            var config = TypeAdapterConfig.GlobalSettings;
+            //config.RequireDestinationMemberSource = true;
+
             // scan the current assembly and register all found mappings
-            var mappingRegistrations = TypeAdapterConfig.GlobalSettings.Scan(typeof(Authentication.Mapping.AppUserMappingRegister).Assembly);
+            var mappingRegistrations = config.Scan(typeof(Authentication.Mapping.AppUserMappingRegister).Assembly);
             mappingRegistrations.ToList().ForEach(register => register.Register(config));
             var mapperConfig = new Mapper(config);
+            services.AddSingleton(config);
             services.AddSingleton<IMapper>(mapperConfig);
         }
     }

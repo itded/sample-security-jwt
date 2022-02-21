@@ -1,0 +1,13 @@
+﻿[{
+  "name": "doc-01.txt",
+  "roles": [0, 1]
+},{
+  "name": "doc-02.txt",
+  "roles": [0]
+},{
+  "name": "doc-03.txt",
+  "roles": [1]
+},{
+  "name": "doc-04.txt",
+  "roles": [2]
+}]

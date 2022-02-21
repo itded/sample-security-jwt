@@ -1,0 +1,3 @@
+﻿A user can read documents filtered by his role retrieved from the server after login.
+
+should support both cookie authentication and oauth
