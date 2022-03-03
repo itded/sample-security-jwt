@@ -19,7 +19,7 @@ namespace JwtDemoClientApp.Commands
             _logger = logger;
         }
 
-        public async Task<(string Token, bool Success)> ExecuteAsync()
+        public async Task<(UserLoginResponse Response, bool Success)> ExecuteAsync()
         {
             try
             {
@@ -36,7 +36,7 @@ namespace JwtDemoClientApp.Commands
                 if (response.IsSuccessStatusCode)
                 {
                     var userLoginResponse = await response.Content.ReadFromJsonAsync<UserLoginResponse>();
-                    return (userLoginResponse.JwtToken, true);
+                    return (userLoginResponse, true);
                 }
                 else
                 {

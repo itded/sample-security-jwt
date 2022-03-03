@@ -1,6 +1,8 @@
-﻿using System;
+﻿using System.Linq;
+using System.Security.Claims;
+using JwtDemoWebApp.Common.Constants;
+using JwtDemoWebApp.Common.Enums;
 using JwtDemoWebApp.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +12,7 @@ namespace JwtDemoWebApp.Controllers.Api
     [ApiVersion("1.0")]
     // [Route("api/v{version:apiVersion}/documents")]
     [Route("api/documents")]
-    [Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes=AuthenticationSchemes.JwtAuthenticationScheme)]
     public class DocumentApiController : ControllerBase
     {
         private readonly IDocumentService _documentService;
@@ -21,12 +23,21 @@ namespace JwtDemoWebApp.Controllers.Api
         }
 
         [HttpGet("GetAllDocumentsByRole")]
-        public void GetAllDocumentsByRole()
+        public IActionResult GetAllDocumentsByRole()
         {
-            throw new NotImplementedException();
-            // // TODO: read token, validate, extract the role claim
-            // User.FindFirst(ClaimTypes.NameIdentifier)
-            // _documentService.GetAllDocumentsByRole();
+            // TODO: extract roles
+            var role = User.Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value)
+                .FirstOrDefault();
+
+            if (role == null)
+            {
+                return new EmptyResult();
+            }
+
+            var documents = _documentService.GetAllDocumentsByRole(UserRoleEnum.Tester);
+            return new JsonResult(documents);
         }
     }
 }

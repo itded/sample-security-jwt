@@ -1,7 +1,8 @@
 ﻿namespace JwtDemoWebApp.Common.Constants
 {
-    public class AuthenticationSchemes
+    public static class AuthenticationSchemes
     {
         public const string CookiesAuthenticationScheme = "CookiesAuthentication";
+        public const string JwtAuthenticationScheme = "JwtAuthentication";
     }
 }

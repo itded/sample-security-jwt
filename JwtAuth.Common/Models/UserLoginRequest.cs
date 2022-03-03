@@ -1,4 +1,4 @@
-﻿namespace JwtAuth.Common
+﻿namespace JwtAuth.Common.Models
 {
     public class UserLoginRequest
     {

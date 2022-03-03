@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using JwtAuthServer.Authentication.Models;
+using JwtAuth.Common.Models;
 using JwtAuthServer.Authentication.Services;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
@@ -20,14 +20,15 @@ namespace JwtAuthServer.Api.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate(UserLoginRequest model)
         {
-            var response = await _userService.LoginUserAsync(model);
+            var requestModel = model.Adapt<JwtAuthServer.Authentication.Models.UserLoginRequest>();
+            var response = await _userService.LoginUserAsync(requestModel);
 
             if (!response.Succeeded)
             {
                 return BadRequest(new {message = "Username or password is incorrect"});
             }
 
-            var clientResponse = response.Adapt<JwtAuth.Common.Models.UserLoginResponse>();
+            var clientResponse = response.Adapt<UserLoginResponse>();
 
             return Ok(clientResponse);
         }
@@ -35,14 +36,16 @@ namespace JwtAuthServer.Api.Controllers
         [HttpPost("validate")]
         public async Task<IActionResult> Validate(ValidateTokenRequest model)
         {
-            var response = await _userService.ValidateTokenAsync(model);
+            var requestModel = model.Adapt<JwtAuthServer.Authentication.Models.ValidateTokenRequest>();
+            var response = await _userService.ValidateTokenAsync(requestModel);
 
             if (!response.Succeeded)
             {
                 return BadRequest(new {message = "User token is incorrect"});
             }
 
-            return Ok(response);
+            var clientResponse = response.Adapt<ValidateTokenResponse>();
+            return Ok(clientResponse);
         }
 
     }

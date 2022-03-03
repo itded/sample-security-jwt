@@ -60,18 +60,18 @@ namespace JwtAuthServer.Api
 
             services.AddSingleton(_ => tokenValidationParameters);
 
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    options.RequireHttpsMetadata = false;
-                    options.SaveToken = true;
-                    options.TokenValidationParameters = tokenValidationParameters;
-                });
+            // services.AddAuthentication(options =>
+            //     {
+            //         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            //     })
+            //     .AddJwtBearer(options =>
+            //     {
+            //         options.RequireHttpsMetadata = false;
+            //         options.SaveToken = true;
+            //         options.TokenValidationParameters = tokenValidationParameters;
+            //     });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

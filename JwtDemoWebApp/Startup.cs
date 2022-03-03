@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
+using JwtAuth.Schemes;
 using JwtDemoWebApp.Common.Constants;
+using JwtDemoWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -39,15 +41,18 @@ namespace JwtDemoWebApp
                     options.AccessDeniedPath = "/Account/Forbidden/";
                     options.Cookie.Name = "JwtDemoWebAppCookie";
                     options.Cookie.HttpOnly = true;
+                })
+                .AddCustomJwtBearer(AuthenticationSchemes.JwtAuthenticationScheme, options =>
+                {
+                    options.Authority = "https://localhost:5001/";
+                    options.ValidatePath = "/auth/validate";
+                    options.DisableServerCertificateValidation = true;
                 });
-            //     .AddCustomJwtBearer(AuthenticationSchemes.JwtAuthenticationScheme, options =>
-            //     {
-            //         options.Authority = "https://localhost:5001";
-            //         options.DisableServerCertificateValidation = true;
-            //     });
-            //
-            // // used for the cookie authentication
-            // services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            // used for the cookie authentication
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddScoped<IDocumentService, DocumentService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
