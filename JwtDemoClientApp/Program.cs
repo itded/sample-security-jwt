@@ -23,7 +23,7 @@ namespace JwtDemoClientApp
             // Send a request to the resource server
             var getTesterDocumentCommand = serviceProvider.GetRequiredService<GetTesterDocumentCommand>();
             var response = getTesterTokenCommandResult.Response;
-            await getTesterDocumentCommand.ExecuteAsync(response.UserName, response.JwtToken, response.RefreshToken);
+            await getTesterDocumentCommand.ExecuteAsync(response.UserName, response.JwtToken);
         }
 
         private static IServiceProvider CreateServiceProvider()

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using JwtDemoWebApp.Common.Constants;
 using JwtDemoWebApp.Common.Enums;
@@ -10,7 +11,7 @@ namespace JwtDemoWebApp.Controllers.Api
 {
     [ApiController]
     [ApiVersion("1.0")]
-    // [Route("api/v{version:apiVersion}/documents")]
+    [Route("api/v{version:apiVersion}/documents")]
     [Route("api/documents")]
     [Authorize(AuthenticationSchemes=AuthenticationSchemes.JwtAuthenticationScheme)]
     public class DocumentApiController : ControllerBase
@@ -22,22 +23,36 @@ namespace JwtDemoWebApp.Controllers.Api
             _documentService = documentService;
         }
 
-        [HttpGet("GetAllDocumentsByRole")]
-        public IActionResult GetAllDocumentsByRole()
+        [HttpGet("getByRoles")]
+        public IActionResult GetAllDocumentsByRoles()
         {
-            // TODO: extract roles
-            var role = User.Claims
+            var roles = User.Claims
                 .Where(c => c.Type == ClaimTypes.Role)
-                .Select(c => c.Value)
-                .FirstOrDefault();
+                .Select(c => Map(c.Value))
+                .ToArray();
 
-            if (role == null)
+            if (!roles.Any())
             {
                 return new EmptyResult();
             }
 
-            var documents = _documentService.GetAllDocumentsByRole(UserRoleEnum.Tester);
+            var documents = _documentService.GetAllDocumentsByRoles(roles);
             return new JsonResult(documents);
+        }
+
+        private UserRoleEnum Map(string roleName)
+        {
+            if (roleName.ToUpperInvariant().Equals("R_TESTER"))
+            {
+                return UserRoleEnum.Tester;
+            }
+
+            if (roleName.ToUpperInvariant().Equals("R_USER"))
+            {
+                return UserRoleEnum.User;
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(roleName));
         }
     }
 }

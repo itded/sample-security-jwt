@@ -19,21 +19,22 @@ namespace JwtDemoClientApp.Commands
             _logger = logger;
         }
 
-        public async Task ExecuteAsync(string userName, string jwtToken, string refreshTokem)
+        public async Task ExecuteAsync(string userName, string jwtToken)
         {
             try
             {
                 var request = new
                 {
                     UserName = userName,
-                    Token = jwtToken,
-                    RefreshToken = refreshTokem
+                    Token = jwtToken
                 };
                 var bearerValue = JsonSerializer.Serialize(request);
                 var httpClient = _httpClientFactory.CreateClient(Constants.DocumentWebClient);
                 httpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", bearerValue); // JwtBearerDefaults.AuthenticationScheme
-                await httpClient.GetAsync("/api/documents/GetAllDocumentsByRole");
+                var response = await httpClient.GetAsync("/api/documents/getByRoles");
+                var content = await response.Content.ReadAsStringAsync();
+                _logger.LogInformation(content);
             }
             catch (Exception ex)
             {

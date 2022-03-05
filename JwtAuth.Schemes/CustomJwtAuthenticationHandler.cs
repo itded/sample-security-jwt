@@ -57,10 +57,10 @@ namespace JwtAuth.Schemes
 
             var claims = new List<Claim>
             {
-                new (ClaimTypes.Name, request.UserName),
+                new (ClaimTypes.Name, response.UserName),
             };
             var identity = new ClaimsIdentity(claims, Scheme.Name);
-            var principal = new GenericPrincipal(identity, null);
+            var principal = new GenericPrincipal(identity, response.Roles);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
             var result = AuthenticateResult.Success(ticket);
             return result;

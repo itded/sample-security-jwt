@@ -210,19 +210,13 @@ namespace JwtAuthServer.Authentication.Services
                     });
                 }
 
-                var isRefreshTokenValid = await _userManager.VerifyUserTokenAsync(user, nameof(AppRefreshTokenProvider),
-                    "VerifyRefreshToken",
-                    model.RefreshToken);
-                if (!isRefreshTokenValid)
-                {
-                    return new ValidateTokenResponse(new ResponseError()
-                    {
-                        Code = "InvalidRefreshToken",
-                        Description = "Refresh token is invalid"
-                    });
-                }
+                var roles = await _userManager.GetRolesAsync(user);
 
-                return new ValidateTokenResponse();
+                return new ValidateTokenResponse()
+                {
+                    UserName = user.UserName,
+                    Roles = roles.ToArray()
+                };
             }
             catch (Exception ex)
             {
