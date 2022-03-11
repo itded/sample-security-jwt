@@ -112,6 +112,8 @@ namespace JwtAuthServer.Authentication.Services
         private async Task<string> GenerateJwtTokenAsync(AppUser user)
         {
             var result = await _userManager.GenerateUserTokenAsync(user, nameof(AppTokenProvider), "Token");
+            await _userManager.SetAuthenticationTokenAsync(user, nameof(AppTokenProvider), "Token", result);
+
             return result;
         }
 
