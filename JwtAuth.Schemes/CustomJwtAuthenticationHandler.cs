@@ -46,8 +46,6 @@ namespace JwtAuth.Schemes
             }
 
             var request = JsonSerializer.Deserialize<ValidateTokenRequest>(tokenJson);
-
-            // TODO: call Api to validate
             var response = await _authenticationManager.ValidateTokenAsync(Options, request);
 
             if (!response.Succeeded)

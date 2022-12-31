@@ -48,5 +48,19 @@ namespace JwtAuthServer.Api.Controllers
             return Ok(clientResponse);
         }
 
+        [HttpPost("rotate")]
+        public async Task<IActionResult> Refresh(RotateTokenRequest model)
+        {
+            var requestModel = model.Adapt<JwtAuthServer.Authentication.Models.RotateTokenRequest>();
+            var response = await _userService.RotateTokenAsync(requestModel);
+
+            if (!response.Succeeded)
+            {
+                return BadRequest(new {message = "User token or user name is incorrect"});
+            }
+
+            var clientResponse = response.Adapt<RotateTokenResponse>();
+            return Ok(clientResponse);
+        }
     }
 }

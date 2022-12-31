@@ -43,7 +43,7 @@ namespace JwtDemoClientApp
                     (_, _, _, _) => true
             });
             
-            // loging
+            // logging
             services.AddSingleton((IConfiguration)Configuration);
             services.AddLogging(loggingBuilder =>
             {

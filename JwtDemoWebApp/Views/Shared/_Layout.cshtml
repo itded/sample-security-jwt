@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Authentication
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -24,11 +25,27 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
-                    <!-- TODO: if user is authenticated -->
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Documents" asp-action="Index">Documents</a>
-                    </li>
-                    <!-- TODO: else login -->
+                
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Documents" asp-action="Index">Documents</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Tokens">Tokens</a>
+                        </li>
+                        <li class="nav-item">
+                            <form  class="form-inline" asp-area="" asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-action="Login" asp-controller="Account">Login</a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

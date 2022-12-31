@@ -1,4 +1,5 @@
-using System.Threading.Tasks;
+using System;
+using System.Net.Http;
 using JwtAuth.Schemes;
 using JwtDemoWebApp.Common.Constants;
 using JwtDemoWebApp.Services;
@@ -34,7 +35,7 @@ namespace JwtDemoWebApp
                 config.AssumeDefaultVersionWhenUnspecified = true;
             });
 
-            services.AddAuthentication()
+            services.AddAuthentication(AuthenticationSchemes.CookiesAuthenticationScheme)
                 .AddCookie(AuthenticationSchemes.CookiesAuthenticationScheme, options =>
                 {
                     options.LoginPath = "/Account/Login/";
@@ -49,6 +50,16 @@ namespace JwtDemoWebApp
                     options.DisableServerCertificateValidation = true;
                 });
 
+            services.AddHttpClient(HttpClientNames.ServerApiClient, httpClient =>
+            {
+                httpClient.BaseAddress = new Uri("https://localhost:5001");
+            }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+            {
+                ClientCertificateOptions = ClientCertificateOption.Manual,
+                ServerCertificateCustomValidationCallback =
+                    (_, _, _, _) => true
+            });
+            
             // used for the cookie authentication
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -74,6 +85,8 @@ namespace JwtDemoWebApp
 
             app.UseRouting();
 
+            // if
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
