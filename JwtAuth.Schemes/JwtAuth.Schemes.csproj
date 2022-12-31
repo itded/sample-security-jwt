@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.5" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.2.8" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\JwtAuth.Common\JwtAuth.Common.csproj" />
+    </ItemGroup>
+
+</Project>

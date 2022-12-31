@@ -1,0 +1,17 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=df59c92d_002D4003_002D436c_002Dab59_002D5e5b00e159b4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AppUserServiceTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;Not&gt;&#xD;
+      &lt;TestAncestor&gt;&#xD;
+        &lt;TestId&gt;xUnit::D89F43B5-B6D0-4D76-AD2E-1FD1A33EB930::net5.0::JwtAuthServer.Tests.Services.AppUserServiceTests.LoginUser_ShouldBeOk&lt;/TestId&gt;&#xD;
+      &lt;/TestAncestor&gt;&#xD;
+    &lt;/Not&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;xUnit::D89F43B5-B6D0-4D76-AD2E-1FD1A33EB930::net5.0::JwtAuthServer.Tests.Services.AppUserServiceTests.LoginUser_ShouldBeOk&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+  &lt;/Or&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	
+	
+	
+	</wpf:ResourceDictionary>

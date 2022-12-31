@@ -1,0 +1,32 @@
+﻿@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container">
+    <div class="signup-form">
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+        {
+            <h2>Login</h2>
+            <p>Please login using your name and password</p>
+            <hr>
+            <div class="form-group">
+                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", placeholder = "User Name", required = "required" })
+            </div>
+            <div class="form-group">
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password", required = "required" })
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+        }
+    </div>
+    
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger" role="alert">
+             @ViewBag.Error
+         </div>
+    }
+</div>

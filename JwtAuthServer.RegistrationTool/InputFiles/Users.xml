@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<users>
+    <user name="Administrator">
+        <firstName>Admin</firstName>
+        <lastName>Admin</lastName>
+        <email>admin@test.com</email>
+        <password>P@ssw0rd!</password>
+        <roles>
+            <role>R_ADMIN</role>
+        </roles>
+    </user>
+    <user name="Tester">
+        <firstName>Tester</firstName>
+        <lastName>Tester</lastName>
+        <email>tester@test.com</email>
+        <password>P@ssw0rd!</password>
+        <roles>
+            <role>R_TESTER</role>
+        </roles>
+    </user>
+    <user name="User">
+        <firstName>User</firstName>
+        <lastName>User</lastName>
+        <email>user@test.com</email>
+        <password>P@ssw0rd!</password>
+        <roles>
+            <role>R_USER</role>
+        </roles>
+    </user>
+    <user name="MixUser">
+        <firstName>Mix</firstName>
+        <lastName>User</lastName>
+        <email>mixuser@test.com</email>
+        <password>P@ssw0rd!</password>
+        <roles>
+            <role>R_TESTER</role>
+            <role>R_USER</role>
+        </roles>
+    </user>
+</users>

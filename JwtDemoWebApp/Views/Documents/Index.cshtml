@@ -1,0 +1,22 @@
+﻿@model string[]
+
+@{
+    ViewData["Title"] = "Documents";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Use this page to display documents filtered by use role.</p>
+
+
+@if (Model != null && Model.Any())
+{
+    <p>The current user has access to the following documents:</p>
+    @foreach (var doc in Model)
+    {
+        <p>@doc</p>
+    }
+}
+else
+{
+    <p>The current user has no access to any document</p>
+}

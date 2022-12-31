@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<roles>
+    <role name="R_ADMIN" description="Admin" />
+    <role name="R_USER" description="User" />
+    <role name="R_TESTER" description="Tester" />
+</roles>

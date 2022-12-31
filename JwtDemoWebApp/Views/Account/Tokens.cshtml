@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Refresh Tokens";
+}
+
+<div class="container">
+    <div class="row">
+        <label class="col-sm">Token</label>
+        <label class="col-sm">@ViewBag.Token</label>
+    </div>
+    <div class="row">
+        <label class="col-sm">Refresh token</label>
+        <label class="col-sm">@ViewBag.RefreshToken</label>
+    </div>
+    
+    <div class="signup-form">
+        @using (Html.BeginForm("Refresh", "Account", FormMethod.Post))
+        {
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Refresh</button>
+            </div>
+        }
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.Error
+        </div>
+    }
+</div>
