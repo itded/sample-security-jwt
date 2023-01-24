@@ -61,6 +61,24 @@ namespace JwtDemoWebApp.Controllers
             };
 
             var response = await httpClient.PostAsJsonAsync("/auth/rotate", request, CancellationToken.None);
+            if (response.IsSuccessStatusCode)
+            {
+                var rotateTokenResponse = await response.Content.ReadFromJsonAsync<RotateTokenResponse>();
+                Response.Cookies.Append(
+                    CookieNames.XAccessToken,
+                    rotateTokenResponse.JwtToken, new CookieOptions
+                    {
+                        HttpOnly = true,
+                        SameSite = SameSiteMode.Strict
+                    });
+                Response.Cookies.Append(
+                    CookieNames.XRefreshToken,
+                    rotateTokenResponse.RefreshToken, new CookieOptions
+                    {
+                        HttpOnly = true,
+                        SameSite = SameSiteMode.Strict
+                    });
+            }
             
             return RedirectToAction("Tokens");
         }
